@@ -1,3 +1,4 @@
+name: Terraform Validation
 on: 
     workflow_dispatch:
     pull_request:
@@ -12,3 +13,5 @@ jobs:
   
         - name: terraform validate
           uses: dflook/terraform-validate@v1
+
+
