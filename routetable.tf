@@ -12,7 +12,7 @@ resource "aws_route_table" "tanuj_public_route_table" {
 }
 
 resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.vpc_tanuj.id
+  vpc_id =   aws_vpc.vpc_tanuj.id
 
   tags = {
     Name = "Private Route Table for all private subnets"
