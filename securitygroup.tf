@@ -1,11 +1,11 @@
 resource "aws_security_group" "application_sg" {
   vpc_id = aws_vpc.vpc_tanuj.id
 
-  // Description of the security group
   tags = {
     Name = "Application Security Group"
   }
-ingress {
+
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -33,17 +33,32 @@ ingress {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = var.application_port
-    to_port     = var.application_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "db_security_group" {
+  vpc_id = aws_vpc.vpc_tanuj.id
+
+  tags = {
+    Name = "DB Security Group"
+  }
+
+  ingress {
+    from_port         = 3306 
+    to_port           = 3306  
+    protocol          = "tcp"
+    security_groups   = [aws_security_group.application_sg.id]  
+  }
+
+  egress {
+    from_port         = 3306 
+    to_port           = 3306  
+    protocol          = "tcp"
+    security_groups   = [aws_security_group.application_sg.id]  
   }
 }

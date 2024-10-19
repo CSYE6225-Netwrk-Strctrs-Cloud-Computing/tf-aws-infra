@@ -12,3 +12,7 @@ output "public_dns" {
   description = "The public DNS name of the EC2 instance."
   value       = aws_instance.web_app_instance.public_dns
 }
+
+output "rds_endpoint" {
+  value = aws_db_instance.rds_instance.endpoint
+}

@@ -26,7 +26,7 @@ variable "availability_zones" {
 variable "application_port" {
   description = "The port on which the application runs."
   type        = number
-  default     = 8080 // Update the default value as necessary
+  default     = 8080 
 }
 
 variable "key_pair_name" {
@@ -42,5 +42,32 @@ variable "custom_ami" {
 variable "instance_type" {
   description = "The instance type for the EC2 instance."
   type        = string
-  default     = "t2.micro" // Default instance type
+  default     = "t2.micro"
+}
+
+variable "db_master_password" {
+  description = "The master password for the database."
+  type        = string
+  sensitive   = true  
+}
+
+variable "DB_NAME" {
+  description = "The name of the database to create."
+  type        = string
+}
+
+variable "DB_IDENTIFIER" {
+  description = "The identifier for the DB instance."
+  type        = string
+}
+
+variable "DB_USERNAME" {
+  description = "The username for the database."
+  type        = string
+}
+
+variable "DB_PASSWORD" {
+  description = "The password for the database."
+  type        = string
+  sensitive   = true
 }

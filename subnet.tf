@@ -1,6 +1,5 @@
 locals {
   public_subnet_cidrs = [for i in range(var.number_of_public_subnets) : cidrsubnet(var.vpc_cidr, 8, i)]
-
   private_subnet_cidrs = [for i in range(var.number_of_private_subnets) : cidrsubnet(var.vpc_cidr, 8, i + var.number_of_public_subnets)]
 }
 
