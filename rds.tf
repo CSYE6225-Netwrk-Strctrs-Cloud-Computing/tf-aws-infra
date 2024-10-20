@@ -37,7 +37,6 @@ resource "aws_db_instance" "rds_instance" {
   allocated_storage       = 20
   skip_final_snapshot    = true
   storage_encrypted      = true
- 
 
   tags = {
     Name = "CSYE6225 RDS Instance"
