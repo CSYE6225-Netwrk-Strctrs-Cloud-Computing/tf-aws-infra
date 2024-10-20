@@ -13,7 +13,26 @@ resource "aws_instance" "web_app_instance" {
     delete_on_termination = true  
   }
 
-  tags = {
-    Name = "Web Application Instance"
-  }
+  depends_on = [aws_db_instance.rds_instance]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              apt-get update
+              apt-get install -y mysql-server
+
+              #!/bin/bash
+              echo "DATABASE_HOST=${aws_db_instance.rds_instance.endpoint}" >> /home/csye6225/webapp/.env
+              echo "DATABASE_USERNAME=${var.DB_USERNAME}" >> /home/csye6225/webapp/.env
+              echo "DATABASE_PASSWORD=${var.DB_PASSWORD             }" >> /home/csye6225/webapp/.env
+              echo "DATABASE_NAME=${var.DB_NAME}" >> /home/csye6225/webapp/.env
+
+              cd /home/csye6225/webapp
+              npm install 
+              sudo systemctl start webapp 
+              sudo systemctl enable webapp 
+              EOF
+
+  
 }
+
+

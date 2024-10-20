@@ -61,4 +61,5 @@ resource "aws_security_group" "db_security_group" {
     protocol          = "tcp"
     security_groups   = [aws_security_group.application_sg.id]  
   }
+  
 }
