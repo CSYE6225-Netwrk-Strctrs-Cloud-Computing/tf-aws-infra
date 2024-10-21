@@ -16,7 +16,7 @@ resource "aws_db_parameter_group" "rds_parameter_group" {
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "csye6225-subnet-group"
-  subnet_ids = aws_subnet.aws_tanuj_private_subnets[*].id  
+  subnet_ids = aws_subnet.aws_tanuj_private_subnets[*].id
   tags = {
     Name = "CSYE6225 RDS Subnet Group"
   }
@@ -34,7 +34,7 @@ resource "aws_db_instance" "rds_instance" {
   vpc_security_group_ids = [aws_security_group.db_security_group.id]
   publicly_accessible    = false
   parameter_group_name   = aws_db_parameter_group.rds_parameter_group.name
-  allocated_storage       = 20
+  allocated_storage      = 20
   skip_final_snapshot    = true
   storage_encrypted      = true
 
