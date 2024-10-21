@@ -26,7 +26,7 @@ variable "availability_zones" {
 variable "application_port" {
   description = "The port on which the application runs."
   type        = number
-  default     = 8080 
+  default     = 8080
 }
 
 variable "key_pair_name" {
@@ -48,7 +48,7 @@ variable "instance_type" {
 variable "db_master_password" {
   description = "The master password for the database."
   type        = string
-  sensitive   = true  
+  sensitive   = true
 }
 
 variable "DB_NAME" {
