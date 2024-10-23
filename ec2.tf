@@ -23,7 +23,7 @@ resource "aws_instance" "web_app_instance" {
             
               echo "DATAB_HOST=${element(split(":", aws_db_instance.rds_instance.endpoint), 0)}" >> /home/csye6225/webapp/.env
               echo "DATAB_USER=${var.DB_USERNAME}" >> /home/csye6225/webapp/.env
-              echo "DATAB_PASS=${var.DB_PASSWORD           }" >> /home/csye6225/webapp/.env
+              echo "DATAB_PASS=${var.DB_PASSWORD}" >> /home/csye6225/webapp/.env
               echo "DATAB_NAME=${var.DB_NAME}" >> /home/csye6225/webapp/.env
 
          
