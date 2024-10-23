@@ -8,7 +8,7 @@ resource "aws_instance" "web_app_instance" {
   key_name = var.key_pair_name
 
   root_block_device {
-    volume_size                                            = 30
+    volume_size           = 30
     volume_type           = "gp2"
     delete_on_termination = true
   }
