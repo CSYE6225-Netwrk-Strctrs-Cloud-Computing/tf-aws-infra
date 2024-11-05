@@ -8,6 +8,9 @@ resource "aws_route53_record" "server_mapping_record" {
   name    = var.domain_name
   type    = "A"
 
-  ttl     = 60
-  records = [aws_instance.web_app_instance.public_ip]
+  alias {
+    name                   = aws_lb.app_lb.dns_name
+    zone_id                = aws_lb.app_lb.zone_id
+    evaluate_target_health = true
+  }
 }

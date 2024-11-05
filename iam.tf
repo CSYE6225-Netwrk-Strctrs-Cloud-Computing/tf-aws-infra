@@ -60,3 +60,59 @@ resource "aws_iam_instance_profile" "ec2_role_profile" {
   name = "ec2_role_profile"
   role = aws_iam_role.ec2_role.name
 }
+
+resource "aws_autoscaling_policy" "scale_up" {
+  name                    = "scale_up"
+  policy_type             = "SimpleScaling"
+  autoscaling_group_name  = aws_autoscaling_group.app_asg.name
+  scaling_adjustment      = 1
+  adjustment_type         = "ChangeInCapacity"
+  cooldown                = 60
+  metric_aggregation_type = "Average"
+}
+
+resource "aws_autoscaling_policy" "scale_down" {
+  name                    = "scale_down"
+  policy_type             = "SimpleScaling"
+  autoscaling_group_name  = aws_autoscaling_group.app_asg.name
+  scaling_adjustment      = -1
+  adjustment_type         = "ChangeInCapacity"
+  cooldown                = 60
+  metric_aggregation_type = "Average"
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_high" {
+  alarm_name          = "cpu_high"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  treat_missing_data  = "notBreaching"
+  threshold           = "5"
+  alarm_description   = "This alarm fires when CPU utilization is greater than 5%"
+  actions_enabled     = true
+  alarm_actions       = [aws_autoscaling_policy.scale_up.arn]
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.app_asg.name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_low" {
+  alarm_name          = "cpu_low"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  treat_missing_data  = "notBreaching"
+  threshold           = "3"
+  alarm_description   = "This alarm fires when CPU utilization is less than 3%"
+  actions_enabled     = true
+  alarm_actions       = [aws_autoscaling_policy.scale_down.arn]
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.app_asg.name
+  }
+}
