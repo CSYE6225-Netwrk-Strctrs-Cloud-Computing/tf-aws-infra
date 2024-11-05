@@ -6,9 +6,9 @@ resource "aws_autoscaling_group" "app_asg" {
     version = "$Latest"
   }
 
-  min_size         = 3
-  max_size         = 5
-  desired_capacity = 3
+  min_size            = 3
+  max_size            = 5
+  desired_capacity    = 3
   vpc_zone_identifier = aws_subnet.aws_tanuj_public_subnets[*].id
 
 

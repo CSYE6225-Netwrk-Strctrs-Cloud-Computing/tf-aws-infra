@@ -32,7 +32,7 @@ resource "aws_lb" "app_lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load_balancer_sg.id]
-  subnets = aws_subnet.aws_tanuj_public_subnets[*].id
+  subnets            = aws_subnet.aws_tanuj_public_subnets[*].id
 }
 
 resource "aws_lb_listener" "http" {
