@@ -81,24 +81,6 @@ resource "aws_autoscaling_policy" "scale_down" {
   metric_aggregation_type = "Average"
 }
 
-resource "aws_cloudwatch_metric_alarm" "cpu_high" {
-  alarm_name          = "cpu_high"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
-  period              = "60"
-  statistic           = "Average"
-  treat_missing_data  = "notBreaching"
-  threshold           = "5"
-  alarm_description   = "This alarm fires when CPU utilization is greater than 5%"
-  actions_enabled     = true
-  alarm_actions       = [aws_autoscaling_policy.scale_up.arn]
-  dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.app_asg.name
-  }
-}
-
 resource "aws_cloudwatch_metric_alarm" "cpu_low" {
   alarm_name          = "cpu_low"
   comparison_operator = "LessThanThreshold"
@@ -108,7 +90,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
   period              = "60"
   statistic           = "Average"
   treat_missing_data  = "notBreaching"
-  threshold           = "3"
+  threshold           = var.cpu_lowthreshold
   alarm_description   = "This alarm fires when CPU utilization is less than 3%"
   actions_enabled     = true
   alarm_actions       = [aws_autoscaling_policy.scale_down.arn]
@@ -116,3 +98,22 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
     AutoScalingGroupName = aws_autoscaling_group.app_asg.name
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "cpu_high" {
+  alarm_name          = "cpu_high"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  treat_missing_data  = "notBreaching"
+  threshold           = var.cpu_highthreshold
+  alarm_description   = "This alarm fires when CPU utilization is greater than 5%"
+  actions_enabled     = true
+  alarm_actions       = [aws_autoscaling_policy.scale_up.arn]
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.app_asg.name
+  }
+}
+
