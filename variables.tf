@@ -133,11 +133,11 @@ variable "aws_secret_access_key" {
 variable "cpu_lowthreshold" {
   description = "The threshold for CPU utilization in percentage"
   type        = number
-  default = 3
+  default     = 3
 }
 
 variable "cpu_highthreshold" {
   description = "The threshold for CPU utilization in percentage (for high CPU alarm)"
   type        = number
-  default = 5
+  default     = 5
 }
