@@ -141,3 +141,15 @@ variable "cpu_highthreshold" {
   type        = number
   default     = 5
 }
+
+variable "sendgrid_api_key" {
+  description = "SendGrid API Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "lambda_zip_path" {
+  description = "Path to the local Lambda ZIP file"
+  type        = string
+}
+

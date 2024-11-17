@@ -117,3 +117,68 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   }
 }
 
+resource "aws_iam_role" "lambda_execution_role" {
+  name = "lambda-exec-role"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+
+resource "aws_iam_policy" "lambda_sns_policy" {
+  name        = "lambda-sns-policy"
+  description = "Policy for Lambda to access SNS and other resources"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sns:Publish",
+          "sns:Subscribe",
+          "sns:Receive"
+        ]
+        Effect   = "Allow"
+        Resource = aws_sns_topic.user_creation_topic.arn
+      },
+      {
+        Action   = "rds:DescribeDBInstances"
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "ec2_sns_policy_attachment" {
+  name       = "ec2_sns_policy_attach"
+  roles      = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.lambda_sns_policy.arn
+}
+
+
+resource "aws_iam_role_policy_attachment" "lambda_sns_policy_attachment" {
+  policy_arn = aws_iam_policy.lambda_sns_policy.arn
+  role       = aws_iam_role.lambda_execution_role.name
+}
+
+
