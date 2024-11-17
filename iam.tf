@@ -119,13 +119,13 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
 
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda-exec-role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action    = "sts:AssumeRole"
-        Effect    = "Allow"
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
         Principal = {
           Service = "lambda.amazonaws.com"
         }

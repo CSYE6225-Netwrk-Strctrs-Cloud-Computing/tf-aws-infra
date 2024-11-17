@@ -41,7 +41,7 @@ resource "aws_launch_template" "csye6225_asg" {
               echo "AWS_ACCESS_KEY_ID =${var.aws_secret_access_key}" >> /home/csye6225/webapp/.env
               echo "AWS_REGION=${var.region}" >> /home/csye6225/webapp/.env
               echo "S3_BUCKET=${aws_s3_bucket.aws_s3_bucket.bucket}" >> /home/csye6225/webapp/.env
-              echo "SNS_TOPIC_ARN =${aws_sns_topic.user_creation_topic.arn  }" >> /home/csye6225/webapp/.env
+              echo "SNS_TOPIC_ARN =${aws_sns_topic.user_creation_topic.arn}" >> /home/csye6225/webapp/.env
               echo "SENDGRID_API_KEY=${var.sendgrid_api_key}" >> /home/csye6225/webapp/.env
               cd /home/csye6225/webapp
               npm install 

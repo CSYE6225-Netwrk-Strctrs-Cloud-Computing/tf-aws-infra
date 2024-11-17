@@ -53,16 +53,16 @@ resource "aws_security_group" "db_security_group" {
 resource "aws_security_group" "lambda_sg" {
   name        = "lambda-sg"
   description = "Allow Lambda to access RDS and other resources"
-  vpc_id = aws_vpc.vpc_tanuj.id
+  vpc_id      = aws_vpc.vpc_tanuj.id
 
   ingress {
-    from_port   = 3306 
+    from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"] 
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
-   ingress {
+  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
