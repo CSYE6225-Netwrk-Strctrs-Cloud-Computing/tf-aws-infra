@@ -27,8 +27,6 @@ resource "aws_launch_template" "csye6225_asg" {
   user_data = base64encode(<<-EOF
    #!/bin/bash
               apt-get update
-              apt-get install -y mysql-server
-
              
 
               mkdir -p /home/csye6225/webapp
