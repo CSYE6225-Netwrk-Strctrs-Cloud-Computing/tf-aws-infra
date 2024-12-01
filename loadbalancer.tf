@@ -6,13 +6,6 @@ resource "aws_security_group" "load_balancer_sg" {
   }
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -37,8 +30,11 @@ resource "aws_lb" "app_lb" {
 
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.app_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+
+
+  certificate_arn = var.certificate_arn
 
   default_action {
     type             = "forward"

@@ -28,21 +28,15 @@ resource "aws_lambda_function" "user_creation_lambda" {
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
 
+
+  timeout = 30
+
   depends_on = [
     aws_security_group.lambda_sg
   ]
-
-
   environment {
     variables = {
-      SENDGRID_API_KEY = var.sendgrid_api_key
-      DB_HOST          = element(split(":", aws_db_instance.rds_instance.endpoint), 0),
-      DB_USER          = var.DB_USERNAME
-      DB_PASSWORD      = var.DB_PASSWORD
-      DOMAIN           = var.domain_name
-      SNS_TOPIC_ARN    = aws_sns_topic.user_creation_topic.arn
-      DB_NAME          = var.DB_NAME
-
+      SECRET_NAME = var.user_creation_secret_name
     }
   }
 }

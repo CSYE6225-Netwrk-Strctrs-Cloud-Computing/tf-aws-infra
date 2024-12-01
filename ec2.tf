@@ -15,6 +15,7 @@ resource "aws_launch_template" "csye6225_asg" {
       volume_type           = "gp2"
       delete_on_termination = true
       encrypted             = true
+      kms_key_id            = aws_kms_key.ebs_kms_key.arn
     }
   }
 
@@ -27,12 +28,31 @@ resource "aws_launch_template" "csye6225_asg" {
   user_data = base64encode(<<-EOF
    #!/bin/bash
               apt-get update
-             
+              apt-get install -y awscli jq
 
               mkdir -p /home/csye6225/webapp
+              
+              echo "AWS CLI version:" >> /home/csye6225/webapp/user_data_log.txt
+              aws --version >> /home/csye6225/webapp/user_data_log.txt
+
+              
+              SECRET=$(aws secretsmanager get-secret-value \
+              --region ${var.region} \
+              --secret-id ${aws_secretsmanager_secret.db_password_secret.name} \
+              --query SecretString \
+              --output text)
+
+              
+              echo "Fetched secret: $SECRET" >> /home/csye6225/webapp/user_data_log.txt
+
+              DB_PASSWORD=$(echo $SECRET | jq -r '.password')
+
+              
+              echo "DB Password: $DB_PASSWORD" >> /home/csye6225/webapp/user_data_log.txt
+
               echo "DATAB_HOST=${element(split(":", aws_db_instance.rds_instance.endpoint), 0)}" >> /home/csye6225/webapp/.env
               echo "DATAB_USER=${var.DB_USERNAME}" >> /home/csye6225/webapp/.env
-              echo "DATAB_PASS=${var.DB_PASSWORD}" >> /home/csye6225/webapp/.env
+              echo "DATAB_PASS=$DB_PASSWORD" >> /home/csye6225/webapp/.env
               echo "DATAB_NAME=${var.DB_NAME}" >> /home/csye6225/webapp/.env
               echo "PORT=${var.port}" >> /home/csye6225/webapp/.env
               echo "AWS_ACCESS_KEY_ID =${var.aws_access_key_id}" >> /home/csye6225/webapp/.env
