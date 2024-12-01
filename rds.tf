@@ -29,7 +29,7 @@ resource "aws_db_instance" "rds_instance" {
   instance_class         = "db.t3.micro"
   multi_az               = false
   username               = var.DB_USERNAME
-  password               = var.DB_PASSWORD
+  password               = jsondecode(aws_secretsmanager_secret_version.db_password_version.secret_string).password
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids = [aws_security_group.db_security_group.id]
   publicly_accessible    = false
@@ -37,6 +37,7 @@ resource "aws_db_instance" "rds_instance" {
   allocated_storage      = 20
   skip_final_snapshot    = true
   storage_encrypted      = true
+  kms_key_id             = aws_kms_key.rds_kms_key.arn
 
   tags = {
     Name = "CSYE6225 RDS Instance"

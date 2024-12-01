@@ -153,3 +153,21 @@ variable "lambda_zip_path" {
   type        = string
 }
 
+variable "user_account_id" {
+  description = "The user ID of the account"
+  type        = string
+}
+
+variable "secret_name" {
+  description = "The name of the Secrets Manager secret"
+}
+
+variable "user_creation_secret_name" {
+  description = "The name of the Secrets Manager secret for user creation Lambda function"
+
+}
+
+variable "certificate_arn" {
+  description = "The ARN of the ACM certificate to be used"
+  type        = string
+}

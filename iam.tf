@@ -18,7 +18,7 @@ resource "aws_iam_role" "ec2_role" {
 
 resource "aws_iam_policy" "iam_policy_s3_access" {
   name        = "WebAppS3"
-  description = "Provides permission to access S3"
+  description = "Provides permission to access S3 with KMS encryption"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -27,8 +27,7 @@ resource "aws_iam_policy" "iam_policy_s3_access" {
         Action = [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:DeleteObject",
-          "s3:PutObject",
+          "s3:DeleteObject"
         ]
         Effect = "Allow"
         Resource = [
@@ -36,8 +35,47 @@ resource "aws_iam_policy" "iam_policy_s3_access" {
           "arn:aws:s3:::${aws_s3_bucket.aws_s3_bucket.id}/*"
         ]
       },
+      {
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:ReEncrypt*"
+        ]
+        Effect   = "Allow"
+        Resource = "${aws_kms_key.s3_kms_key.arn}"
+      }
     ]
   })
+}
+
+resource "aws_iam_policy" "ec2_kms_secretsmanager_policy" {
+  name        = "EC2KMSSecretsManagerPolicy"
+  description = "Policy to allow EC2 to access KMS and Secrets Manager for database password"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "ec2_secrets_policy_attachment" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ec2_kms_secretsmanager_policy.arn
 }
 
 resource "aws_iam_policy_attachment" "policy_role_attach_s3" {
@@ -137,7 +175,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 
 resource "aws_iam_policy" "lambda_sns_policy" {
   name        = "lambda-sns-policy"
-  description = "Policy for Lambda to access SNS and other resources"
+  description = "Policy for Lambda to access SNS, Secrets Manager, KMS, and other resources"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -164,10 +202,25 @@ resource "aws_iam_policy" "lambda_sns_policy" {
         ]
         Effect   = "Allow"
         Resource = "*"
+      },
+      {
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:secretsmanager:us-east-1:390844772012:secret:${var.user_creation_secret_name}-*"
+      },
+      {
+        Action = [
+          "kms:Decrypt"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
       }
     ]
   })
 }
+
 
 resource "aws_iam_policy_attachment" "ec2_sns_policy_attachment" {
   name       = "ec2_sns_policy_attach"
@@ -175,10 +228,7 @@ resource "aws_iam_policy_attachment" "ec2_sns_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_sns_policy.arn
 }
 
-
 resource "aws_iam_role_policy_attachment" "lambda_sns_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_sns_policy.arn
   role       = aws_iam_role.lambda_execution_role.name
 }
-
-
