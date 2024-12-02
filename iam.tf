@@ -208,7 +208,7 @@ resource "aws_iam_policy" "lambda_sns_policy" {
           "secretsmanager:GetSecretValue"
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:secretsmanager:us-east-1:390844772012:secret:${var.user_creation_secret_name}-*"
+        Resource = "arn:aws:secretsmanager:us-east-1:${var.user_account_id}:secret:${var.user_creation_secret_name}-*"
       },
       {
         Action = [
